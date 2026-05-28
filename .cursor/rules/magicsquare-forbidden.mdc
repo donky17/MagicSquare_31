@@ -1,0 +1,25 @@
+---
+title: 금지 규칙 (Forbidden)
+scope: repository
+---
+
+## Purpose
+- 테스트 신뢰도/회귀 안전성을 해치는 패턴을 금지하고, 대안을 명시한다.
+
+## Forbidden patterns
+### `print()`
+- **Reason**: 테스트/실행 환경에서 출력이 노이즈가 되며, 디버깅이 코드에 남아 회귀를 유발한다.
+- **Alternative**: pytest의 assert 메시지 강화, fixture 분해, parametrization, (필요 시) 로거 사용
+
+### 하드코딩 상수(매직 넘버/문자열) 남발
+- **Reason**: 규칙 변경/확장 시 수정 지점이 분산되고 의미가 불명확해진다.
+- **Alternative**: 상수는 entity의 Value Object/상수 모듈로 캡슐화하고 이름을 부여한다.
+
+### `except:` (단독 사용)
+- **Reason**: SystemExit/KeyboardInterrupt 등까지 삼켜 오류를 숨기고, 테스트가 실패해야 할 상황을 통과시킨다.
+- **Alternative**: 구체 예외를 명시하고, 필요한 경우 예외를 재발생(raise)하거나 도메인 예외로 변환한다.
+
+## AI behavior (enforcement)
+- ECB 레이어 경계를 위반하는 의존(역방향 import 등)을 만들지 않는다.
+- tdd_rules의 현재 phase를 벗어나는 행동(예: GREEN에서 리팩터링)을 하지 않는다.
+- tdd_rules 위반이 감지되면 사용자에게 경고하고, 위반 없이 진행 가능한 대안을 제시한다.
