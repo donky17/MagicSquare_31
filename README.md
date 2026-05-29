@@ -121,11 +121,15 @@ QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼�
 ```
 MagicSquare_xx/
 ├── README.md                                                    ← 이 파일
+├── src/                                                         ← 애플리케이션 소스 (boundary, entity)
+├── docs/                                                        ← test_plan.md, defect_list.md
 ├── Report/
 │   ├── 01.ProblemDefinition_Report.md                           ← STEP 1~5 문제 정의
-│   └── 02.DualTrack_CleanArchitecture_Design_Report.md          ← Dual-Track · CA 설계
+│   ├── 02.DualTrack_CleanArchitecture_Design_Report.md          ← Dual-Track · CA 설계
+│   └── 07.AC_FR_01_01_RED_Testing_and_QA_Report.md              ← AC-FR-01-01 RED·QA 보고서
 ├── Prompt/
-│   └── 02.DualTrack_CleanArchitecture_Design-Prompt.md           ← 설계 단계 대화 transcript
+│   ├── 02.DualTrack_CleanArchitecture_Design-Prompt.md           ← 설계 단계 대화 transcript
+│   └── 07.AC_FR_01_01_RED_Testing-Prompt.md                     ← RED 테스트 단계 transcript
 └── Prompting/
     └── 01.ProblemDefinition_Report-Prompt.md                    ← 문제 정의 대화 transcript
 ```
@@ -135,7 +139,11 @@ MagicSquare_xx/
 | [Report/01.ProblemDefinition_Report.md](./Report/01.ProblemDefinition_Report.md) | 관찰, Why #1~#3, 진짜 문제 정의, Invariant, 부록 전체 |
 | [Report/02.DualTrack_CleanArchitecture_Design_Report.md](./Report/02.DualTrack_CleanArchitecture_Design_Report.md) | Logic / UI Boundary / Data 설계, 테스트·통합·Traceability |
 | [Report/06.PRD_MagicSquare_xx.md](./Report/06.PRD_MagicSquare_xx.md) | 구현 전 PRD(비전/범위/계약/불변식/검증/품질바) |
+| [Report/07.AC_FR_01_01_RED_Testing_and_QA_Report.md](./Report/07.AC_FR_01_01_RED_Testing_and_QA_Report.md) | AC-FR-01-01 RED 테스트·QA·결함·환경 정비 보고서 |
+| [docs/test_plan.md](./docs/test_plan.md) | AC-FR-01-01 테스트 계획서 |
+| [docs/defect_list.md](./docs/defect_list.md) | RED 단계 결함 목록 |
 | [Prompt/02.DualTrack_CleanArchitecture_Design-Prompt.md](./Prompt/02.DualTrack_CleanArchitecture_Design-Prompt.md) | Dual-Track 설계 단계 User/Cursor 프롬프트 export |
+| [Prompt/07.AC_FR_01_01_RED_Testing-Prompt.md](./Prompt/07.AC_FR_01_01_RED_Testing-Prompt.md) | AC-FR-01-01 RED 테스트 단계 transcript |
 | [Prompting/01.ProblemDefinition_Report-Prompt.md](./Prompt/01.ProblemDefinition_Report-Prompt.md) | 문제 정의 단계 User/Cursor 프롬프트 export |
 
 ---
@@ -150,6 +158,37 @@ MagicSquare_xx/
 
 ---
 
+## RED 단계 To-Do 리스트
+
+> 이 체크리스트는 test_plan.md 기반으로 생성되었습니다.
+> 각 항목은 RED(실패 테스트 작성) 완료 시 체크합니다.
+
+### Track A — UI / Boundary 테스트
+- [ ] TC-A-01: grid=None 입력 → 실패 결과 반환 (Happy Path of Failure)
+- [ ] TC-A-02: code가 정확히 "INVALID_SIZE" 문자열인지 검증
+- [ ] TC-A-03: message가 "Grid must be 4x4." 와 문자 단위 동일한지 검증
+- [ ] TC-A-04: grid=None 시 Domain 진입점 0회 호출 (mock/spy 검증)
+- [ ] TC-A-05: grid=[] 빈 리스트 → 실패 결과 반환
+- [ ] TC-A-06: grid=3×4 크기 불일치 → 실패 결과 반환
+- [ ] TC-A-07: 반환 객체 타입이 지정 실패 결과 구조체인지 검증
+
+### Track B — Domain / Logic 테스트
+- [ ] TC-B-01: resolve()가 None grid를 직접 받지 않음을 격리 검증
+- [ ] TC-B-02: Boundary가 None 분기를 처리 후 resolve() 미호출 확인
+- [ ] TC-B-03: resolve() mock이 호출됐을 경우 테스트 실패 처리
+- [ ] TC-B-04: AC-FR-01-02~05 범위의 케이스는 이 커밋에 포함하지 않음 확인
+
+### 커버리지 목표
+- [ ] Domain Logic: 95%+ (pip install pytest-cov)
+- [ ] Boundary Layer: 85%+
+- [ ] 전체 TOTAL: 90%+
+
+### 결함 목록 연결
+- [x] defect_list.md 생성 및 발견 결함 기록 ([docs/defect_list.md](./docs/defect_list.md))
+- [ ] 모든 결함 수정 후 회귀 테스트 통과 확인
+
+---
+
 ## 문서 이력
 
 | 날짜 | 내용 |
@@ -157,6 +196,8 @@ MagicSquare_xx/
 | 2026-05-28 | STEP 1~5 문제 정의 완료, `Report/01.ProblemDefinition_Report.md` 작성 |
 | 2026-05-28 | Dual-Track · Clean Architecture 설계, `Report/02...`, `Prompt/02...` 작성 |
 | 2026-05-28 | 구현 전 PRD 초안 작성, `Report/06.PRD_MagicSquare_xx.md` 작성 |
+| 2026-05-29 | AC-FR-01-01 RED 결함 목록, `docs/defect_list.md` 작성 |
+| 2026-05-29 | AC-FR-01-01 RED·QA 보고서·transcript, `Report/07...`, `Prompt/07...` 작성 |
 
 ---
 
