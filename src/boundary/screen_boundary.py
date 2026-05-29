@@ -5,15 +5,14 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from boundary.models import FailureResult
+from entity.constants import GRID_SIZE
 from entity.exceptions import DomainError
-
-GRID_SIZE = 4
 
 ResolvePort = Callable[[list[list[int]]], list[int]]
 
 
 class ScreenBoundary:
-    """Boundary entry for grid submission (AC-FR-01-01 RED: not implemented)."""
+    """Boundary entry for grid submission and domain resolve delegation."""
 
     def __init__(self, resolve: ResolvePort) -> None:
         self._resolve = resolve
