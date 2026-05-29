@@ -307,6 +307,145 @@ MagicSquare_xx/
 
 ---
 
+## TDD REFACTOR 체크리스트 (`src/control` · `src/boundary` · `src/boundary/ui`)
+
+> **전제:** `.cursorrules` `refactor_phase` — 기능 변경 없이 구조만 개선, **전체 관련 테스트 GREEN 유지**, 커버리지·핵심 경로 검증 유지.  
+> **한 줄 원칙:** GREEN 테스트가 없으면 리팩터가 외부 동작을 바꿔도 회귀를 탐지할 수 없다.  
+> **상세 보고서:** [Report/13.REFACTOR_Phase_Readiness_and_Checklist_Report.md](./Report/13.REFACTOR_Phase_Readiness_and_Checklist_Report.md) · Transcript: [Prompt/13.REFACTOR_Phase_Readiness_and_Checklist-Prompt.md](./Prompt/13.REFACTOR_Phase_Readiness_and_Checklist-Prompt.md)
+
+### REFACTOR 단계 공통 규칙
+
+- [ ] 외부 동작(기능)을 바꾸지 않는다
+- [ ] 리팩터 중 관련 테스트가 계속 GREEN인지 수시로 확인한다
+- [ ] 테스트 삭제·완화·skip으로 실패를 숨기지 않는다
+- [ ] 커버리지를 낮추거나 테스트가 못 잡는 변경을 섞지 않는다
+
+---
+
+### 1. 파일별 테스트 대응
+
+| 소스 파일 | 대응 `test_*.py` | 상태 | REFACTOR 전 필요 조치 |
+|-----------|------------------|------|------------------------|
+| `src/control/__init__.py` | 없음 (패키지 마커) | — | 불필요 |
+| `src/control/solve.py` | **전용 없음** | 간접: Golden Master | `tests/control/test_solve.py` — `resolve()` 위임·`DomainError` 전파 (mock/spy) |
+| `src/boundary/__init__.py` | 없음 (re-export) | — | 불필요 |
+| `src/boundary/models.py` | **전용 없음** | 간접: AC-FR-01-01·GM | 선택: `tests/boundary/test_models.py` — `FailureResult` frozen·필드 |
+| `src/boundary/screen_boundary.py` | [`test_grid_input_validation_ac_fr_01_01.py`](./tests/boundary/test_grid_input_validation_ac_fr_01_01.py) | **25 GREEN** | REFACTOR 가능 |
+| | [`test_u_in_validation.py`](./tests/boundary/test_u_in_validation.py) | **5 RED** | U-IN-04~08 — **미구현 AC** (boundary 선행 검증). REFACTOR 범위 밖 |
+| | [`test_u_out_contract.py`](./tests/boundary/test_u_out_contract.py) | **3 RED** | U-OUT-01~03 — **동작은 있음**, 테스트 GREEN 전환 필요 |
+| | [`test_u_flow_isolation.py`](./tests/boundary/test_u_flow_isolation.py) | **3 RED** | null/size invalid는 AC-FR-01-01에서 이미 GREEN; E002/E005 2건은 **미구현 AC** |
+| | [`test_golden_master_magic_square.py`](./tests/test_golden_master_magic_square.py) | **9 GREEN** | `ScreenBoundary`+`resolve` 통합 회귀 — REFACTOR 안전망 |
+| `src/boundary/ui/__init__.py` | 없음 | — | 불필요 |
+| `src/boundary/ui/main_window.py` | **없음** | **0% 커버** | `tests/boundary/ui/test_main_window.py` — `_read_grid()` (`UI_PARSE_ERROR`, `UI_CELL_RANGE`) 등 |
+
+---
+
+### 2. REFACTOR 착수 전 — GREEN 전환 대상 (RED 스켈레톤)
+
+**반드시 GREEN** (이미 구현된 동작, `pytest.fail`만 남아 있음)
+
+- [ ] **U-OUT-01** — 성공 시 `list[int]` 길이 6 (`test_u_out_contract.py`)
+- [ ] **U-OUT-02** — 좌표 `r,c` 1-index ∈ [1,4] (`test_u_out_contract.py`)
+- [ ] **U-OUT-03** — 성공 시 `FailureResult` 아님 (`test_u_out_contract.py`)
+- [ ] **U-FLOW-02 (null)** — `grid=None` 시 `resolve` 0회 (`test_u_flow_isolation.py` 1건, AC-FR-01-01과 중복 assert 이식 가능)
+
+**신규 작성** (RED 스켈레톤 없음, 커버 공백)
+
+- [ ] `tests/control/test_solve.py` — `control.solve.resolve` 단위 잠금
+- [ ] `tests/boundary/ui/test_main_window.py` — `_read_grid()` UI 파싱·범위 검증
+
+**보류 — GREEN phase** (기능 추가, REFACTOR 전제 아님)
+
+- [ ] U-IN-04~08 (5건) — boundary 선행 검증 미구현 (현재 `resolve()` → `DomainError` 경로)
+- [ ] U-FLOW-02 E002/E005 (2건) — invalid 시 domain 위임, `execute` 0회 미충족
+
+---
+
+### 3. REFACTOR 착수 순서 (권장)
+
+```
+[1] U-OUT GREEN (3) + U-FLOW null GREEN (1, 선택)
+[2] tests/control/test_solve.py 추가
+[3] tests/boundary/ui/test_main_window.py 추가 (_read_grid 중심)
+[4] screen_boundary.py / solve.py / main_window.py 구조 리팩터
+[5] 매 변경 후: pytest tests/boundary/test_grid_input_validation_ac_fr_01_01.py -v
+              pytest -m golden_master -v
+```
+
+| 단계 | 수정 허용 범위 | 금지 |
+|------|----------------|------|
+| 4-A | `src/control/solve.py` — 네이밍·위임 구조 | `entity.solver` 규칙 변경 |
+| 4-B | `src/boundary/screen_boundary.py` — 책임 분리·`GRID_SIZE` SSOT | AC-FR-01-01 `INVALID_SIZE` 계약 변경 |
+| 4-C | `src/boundary/ui/main_window.py` — UI/파싱 분리 | Error Contract 코드·메시지 변경 |
+
+---
+
+### 4. 검증 명령
+
+```bash
+# AC-FR-01-01 (Boundary size 검증 — REFACTOR 중 항상 GREEN)
+pytest tests/boundary/test_grid_input_validation_ac_fr_01_01.py -v
+
+# Golden Master (통합 회귀 — REFACTOR 안전망)
+pytest -m golden_master -v
+
+# REFACTOR 전 GREEN 전환 후 (U-OUT 추가)
+pytest tests/boundary/test_u_out_contract.py -v
+```
+
+#### 수동 스모크 테스트 (GUI)
+
+> 자동화 pytest 이후, REFACTOR·릴리스 전 **사람이 눈으로 확인**하는 최소 시나리오.  
+> Golden Master(GM-TC-01~05)와 동일 입력·기대를 GUI에서 재현한다.
+
+**실행 (프로젝트 루트):**
+
+```bash
+pip install -r requirements.txt   # 최초 1회 (PyQt6)
+python main.py
+```
+
+```powershell
+# Windows · venv 사용 시
+.venv\Scripts\pip install -r requirements.txt
+.venv\Scripts\python main.py
+```
+
+**공통 확인**
+
+- [ ] 창 제목 `MagicSquare_xx — 4×4 마방진 퍼즐`, 4×4 격자·「해결」「초기화」「샘플 불러오기」 버튼 표시
+- [ ] 기동 시 **샘플 불러오기** 상태 메시지 (`샘플 퍼즐이 로드되었습니다…`)
+- [ ] 창 닫기 시 프로세스 정상 종료 (크래시 없음)
+
+| ID | 조작 | 기대 결과 (결과 패널) |
+|----|------|------------------------|
+| **SM-01** | 샘플 로드 → **해결** (GM-TC-02 / G2) | 녹색 성공 — `(3,3)→6`, `(4,4)→1`, 벡터 `[3, 3, 6, 4, 4, 1]` |
+| **SM-02** | **초기화** 후 격자 수동 입력 — GM-TC-01 격자 → **해결** | 성공 — `(3,3)→6`, `(4,3)→15` (small-first) |
+| **SM-03** | 빈칸 3개 (예: (4,3)·(4,4) 모두 `0`) → **해결** | `[EMPTY_COUNT_INVALID]` 빨간 오류 |
+| **SM-04** | non-zero `7` 중복 (GM-TC-04) → **해결** | `[DUPLICATE_NONZERO]` |
+| **SM-05** | GM-TC-05 격자 입력 → **해결** | `[NO_VALID_COMPLETION]` |
+| **SM-06** | 한 칸에 `abc` 입력 → **해결** | `[UI_PARSE_ERROR]` — `(행,열) 칸에 올바른 정수…` |
+| **SM-07** | 한 칸에 `17` 또는 `-1` → **해결** | `[UI_CELL_RANGE]` — `0 또는 1~16` |
+| **SM-08** | **초기화** → **해결** (빈 격자) | Domain/Boundary 오류 코드 표시 (빈칸 수·값 계약 위반) |
+
+REFACTOR 후 **SM-01·SM-02**는 반드시 재실행한다 (출력 포맷·좌표 1-index·격자 반영 회귀).
+
+---
+
+### 5. 진행 현황 스냅샷 (REFACTOR)
+
+| 구분 | GREEN | RED | 비고 |
+|------|-------|-----|------|
+| AC-FR-01-01 (`screen_boundary` size) | 25 | 0 | REFACTOR 가능 |
+| Golden Master | 9 | 0 | 통합 회귀 |
+| U-OUT-01~03 | 0 | 3 | **REFACTOR 전 GREEN 권장** |
+| U-FLOW-02 | 0* | 3 | *null/size는 AC-FR-01-01에서 커버 |
+| U-IN-04~08 | 0 | 5 | GREEN phase (AC-FR-01-02~05) |
+| `control/solve.py` 전용 | 0 | — | 테스트 신규 작성 필요 |
+| `ui/main_window.py` | 0 | — | 테스트 신규 작성 필요 |
+
+---
+
 ## 문서 이력
 
 | 날짜 | 내용 |
@@ -318,6 +457,8 @@ MagicSquare_xx/
 | 2026-05-29 | AC-FR-01-01 RED·QA 보고서·transcript, `Report/07...`, `Prompt/07...` 작성 |
 | 2026-05-29 | AC-FR-01-01 GREEN 시작 — Boundary `ScreenBoundary.submit()`, 통합 2커밋 전략 README 반영 |
 | 2026-05-29 | AC-FR-01-01 GREEN 완료 보고서·transcript 갱신, `Report/10...`, `Prompt/10...` (25 passed) |
+| 2026-05-29 | TDD REFACTOR 체크리스트 추가 (`control` / `boundary` / `boundary/ui`) |
+| 2026-05-29 | REFACTOR 준비 보고서·transcript, `Report/13...`, `Prompt/13...` |
 
 ---
 
