@@ -365,8 +365,8 @@ MagicSquare_xx/
 - [x] **SB-R-02** `GRID_SIZE` — `from entity.constants import GRID_SIZE` + 모듈 re-export
 - [x] **SB-R-03** `_invalid_size_result()` — `INVALID_SIZE` / `"Grid must be 4x4."` 단일 생성
 - [x] **SB-R-04** `_is_valid_grid_size(grid)` — size 검증 private 추출
-- [ ] **SB-R-05** `_to_failure(exc: DomainError)` — domain → DTO 매핑 분리
-- [ ] **SB-R-V** 검증 — AC-FR-01-01 25/25 + Golden Master 9/9 PASS
+- [x] **SB-R-05** `_to_failure(exc: DomainError)` — domain → DTO 매핑 분리
+- [x] **SB-R-V** 검증 — AC-FR-01-01 25/25 + Golden Master 9/9 PASS
 
 ---
 
@@ -423,9 +423,9 @@ REFACTOR 후 **SM-01·SM-02**는 반드시 재실행한다 (출력 포맷·좌�
 
 | 구분 | GREEN | 비고 |
 |------|-------|------|
-| AC-FR-01-01 (`screen_boundary` size) | 25 | REFACTOR 진행 중 |
+| AC-FR-01-01 (`screen_boundary` size) | 25 | REFACTOR 완료 |
 | Golden Master | 9 | 통합 회귀 안전망 |
-| `screen_boundary.py` To-Do (§ 3) | 4/6 | SB-R-01~04 완료 · SB-R-05 + SB-R-V 남음 |
+| `screen_boundary.py` To-Do (§ 3) | 6/6 | SB-R-01~05 + SB-R-V 완료 |
 
 ---
 

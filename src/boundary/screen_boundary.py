@@ -24,6 +24,10 @@ def _is_valid_grid_size(grid: list[list[int]] | None) -> bool:
     return len(grid) == GRID_SIZE and all(len(row) == GRID_SIZE for row in grid)
 
 
+def _to_failure(exc: DomainError) -> FailureResult:
+    return FailureResult(code=exc.code, message=exc.message)
+
+
 class ScreenBoundary:
     """Boundary entry for grid submission and domain resolve delegation."""
 
@@ -37,4 +41,4 @@ class ScreenBoundary:
         try:
             return self._resolve(grid)
         except DomainError as exc:
-            return FailureResult(code=exc.code, message=exc.message)
+            return _to_failure(exc)
