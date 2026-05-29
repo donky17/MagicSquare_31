@@ -36,6 +36,35 @@ FORBIDDEN_TEST_NAME_FRAGMENTS = (
 )
 
 
+def _functional_test_function_names(module_path: Path | None = None) -> list[str]:
+    """Collect test_* names from functional classes (excludes TestScopeRestriction)."""
+    module_path = module_path or Path(__file__)
+    tree = ast.parse(module_path.read_text(encoding="utf-8"))
+    names: list[str] = []
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef) and node.name != "TestScopeRestriction":
+            for item in node.body:
+                if isinstance(item, ast.FunctionDef) and item.name.startswith("test_"):
+                    names.append(item.name)
+    return names
+
+
+def _functional_test_source(module_path: Path | None = None) -> str:
+    """Concatenate source of functional test_* functions only."""
+    module_path = module_path or Path(__file__)
+    source = module_path.read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    segments: list[str] = []
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef) and node.name != "TestScopeRestriction":
+            for item in node.body:
+                if isinstance(item, ast.FunctionDef) and item.name.startswith("test_"):
+                    segment = ast.get_source_segment(source, item)
+                    if segment:
+                        segments.append(segment)
+    return "\n".join(segments)
+
+
 class TestNormalFailureReturn:
     """AC-FR-01-01, PRD §8.1 INVALID_SIZE — grid=None 정상 실패 반환."""
 
@@ -332,16 +361,8 @@ class TestScopeRestriction:
 
     def test_module_has_no_4x4_valid_grid_test_function(self) -> None:
         """AC-FR-01-01, PRD §8.1 INVALID_SIZE — no valid 4×4 happy path."""
-        # Given
-        module_path = Path(__file__)
-        tree = ast.parse(module_path.read_text(encoding="utf-8"))
-
-        # When
-        test_names = [
-            node.name
-            for node in ast.walk(tree)
-            if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")
-        ]
+        # Given / When
+        test_names = _functional_test_function_names()
 
         # Then
         assert not any("valid" in name and "4x4" in name for name in test_names)  # AC-FR-01-01
@@ -349,38 +370,31 @@ class TestScopeRestriction:
 
     def test_module_has_no_forbidden_ac_fr_01_02_to_05_test_names(self) -> None:
         """AC-FR-01-01, PRD §8.1 INVALID_SIZE — no AC-FR-01-02~05 test IDs."""
-        # Given
-        module_path = Path(__file__)
-        source = module_path.read_text(encoding="utf-8").lower()
-
-        # When / Then
-        for fragment in ("ac_fr_01_02", "ac_fr_01_03", "ac_fr_01_04", "ac_fr_01_05"):
-            assert fragment not in source  # AC-FR-01-01
-
-    def test_module_has_no_fr_02_to_05_references_in_test_names(self) -> None:
-        """AC-FR-01-01, PRD §8.1 INVALID_SIZE — no FR-02~05 scope."""
-        # Given
-        tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
-
-        # When
-        test_names = [
-            node.name.lower()
-            for node in ast.walk(tree)
-            if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")
-        ]
+        # Given / When
+        test_names = _functional_test_function_names()
 
         # Then
         for name in test_names:
-            for forbidden in FORBIDDEN_TEST_NAME_FRAGMENTS:
-                if forbidden in ("fr_02", "fr_03", "fr_04", "fr_05"):
-                    assert forbidden not in name  # AC-FR-01-01
+            lower = name.lower()
+            for fragment in ("ac_fr_01_02", "ac_fr_01_03", "ac_fr_01_04", "ac_fr_01_05"):
+                assert fragment not in lower  # AC-FR-01-01
+
+    def test_module_has_no_fr_02_to_05_references_in_test_names(self) -> None:
+        """AC-FR-01-01, PRD §8.1 INVALID_SIZE — no FR-02~05 scope."""
+        # Given / When
+        test_names = [name.lower() for name in _functional_test_function_names()]
+
+        # Then
+        for name in test_names:
+            for forbidden in ("fr_02", "fr_03", "fr_04", "fr_05"):
+                assert forbidden not in name  # AC-FR-01-01
 
     def test_module_has_no_4x3_or_5x5_grid_literal_tests(self) -> None:
         """AC-FR-01-01, PRD §8.1 INVALID_SIZE — 4×3, 5×5 excluded from AC."""
-        # Given
-        source = Path(__file__).read_text(encoding="utf-8")
+        # Given / When
+        source = _functional_test_source()
 
-        # When / Then
+        # Then
         assert "range(5)" not in source  # AC-FR-01-01 — no 5×5
         assert "* 3 for" not in source  # AC-FR-01-01 — no 4×3
         assert "for _ in range(4)]" in source or "range(3)" in source

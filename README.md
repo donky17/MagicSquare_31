@@ -3,7 +3,7 @@
 4×4 마방진(Magic Square)을 다루는 프로그램 과제입니다.  
 QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼저 고정하고, 이후 구현·테스트로 확장하는 것을 목표로 합니다.
 
-> **현재 단계:** AC-FR-01-01 **GREEN 진행 중** — Boundary `ScreenBoundary.submit()` 입력 검증 (통합 2커밋 전략)
+> **현재 단계:** AC-FR-01-01 **GREEN 완료** — Boundary `ScreenBoundary.submit()` 입력 검증 (통합 2커밋 전략)
 
 ---
 
@@ -28,19 +28,19 @@ QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼�
 
 ---
 
-### 커밋 2 — size 위반 일괄 (B-T02~B-T04) · DEF-002~004 + 메타 · DEF-005~008
+### 커밋 2 — size 위반 일괄 (B-T02~B-T04) · DEF-002~004 + 메타 · DEF-005~008 · ✅ GREEN 완료
 
 #### 2-A. Boundary 구현 (size 검증 일괄)
 
-- [ ] RED 확인: `[]`, `[[]]*4`, `3×4` → `NotImplementedError` 또는 계약 미충족
-- [ ] GREEN 구현 — `[]` (0행): `len(grid) == 0` 조기 거부
-- [ ] GREEN 구현 — jagged `[[]]*4`: `any(len(row) != 4 for row in grid)` 조기 거부
-- [ ] GREEN 구현 — `3×4`: `len(grid) != 4` 조기 거부
-- [ ] 공통 응답: `FailureResult(code="INVALID_SIZE", message="Grid must be 4x4.")`
-- [ ] 모든 size 실패 경로에서 `resolve` 0회 호출
-- [ ] `TestBoundaryValues` 5건 통과 (#10~14)
-- [ ] `TestDomainIsolation` — size 3건 통과 (#15~17)
-- [ ] `TestMessageIdentity` — size 3건 통과 (#18~20)
+- [x] RED 확인: `[]`, `[[]]*4`, `3×4` → `NotImplementedError` 또는 계약 미충족
+- [x] GREEN 구현 — `[]` (0행): `len(grid) == 0` 조기 거부
+- [x] GREEN 구현 — jagged `[[]]*4`: `any(len(row) != 4 for row in grid)` 조기 거부
+- [x] GREEN 구현 — `3×4`: `len(grid) != 4` 조기 거부
+- [x] 공통 응답: `FailureResult(code="INVALID_SIZE", message="Grid must be 4x4.")`
+- [x] 모든 size 실패 경로에서 `resolve` 0회 호출
+- [x] `TestBoundaryValues` 5건 통과 (#10~14)
+- [x] `TestDomainIsolation` — size 3건 통과 (#15~17)
+- [x] `TestMessageIdentity` — size 3건 통과 (#18~20)
 
 **대상 입력:**
 
@@ -52,23 +52,25 @@ QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼�
 
 #### 2-B. 메타 테스트 정합성 (TestScopeRestriction)
 
-- [ ] #21 `test_module_has_no_4x4_valid_grid_test_function` — 기능 테스트 함수명만 검사 (자기 자신 제외)
-- [ ] #22 `test_module_has_no_forbidden_ac_fr_01_02_to_05_test_names` — docstring/상수 오탐 제거
-- [ ] #23 `test_module_has_no_fr_02_to_05_references_in_test_names` — 메타 함수명 self-match 제거
-- [ ] #24 `test_module_has_no_4x3_or_5x5_grid_literal_tests` — 기능 테스트 소스만 검사
+- [x] #21 `test_module_has_no_4x4_valid_grid_test_function` — 기능 테스트 함수명만 검사 (자기 자신 제외)
+- [x] #22 `test_module_has_no_forbidden_ac_fr_01_02_to_05_test_names` — docstring/상수 오탐 제거
+- [x] #23 `test_module_has_no_fr_02_to_05_references_in_test_names` — 메타 함수명 self-match 제거
+- [x] #24 `test_module_has_no_4x3_or_5x5_grid_literal_tests` — 기능 테스트 소스만 검사
 - [x] #25 `test_module_docstring_declares_ac_fr_01_01_only` (이미 GREEN)
 
 #### 2-C. 커밋 2 완료 기준
 
-- [ ] 기능 테스트 20건 전체 GREEN (`TestNormalFailureReturn` ~ `TestMessageIdentity`)
-- [ ] 메타 테스트 5건 전체 GREEN (`TestScopeRestriction`)
-- [ ] **파일 합계 25 passed**
-- [ ] `pytest --cov=src --cov-report=term-missing` — Boundary 검증 분기 커버 확인 (DEF-009)
-- [ ] [docs/defect_list.md](./docs/defect_list.md) Open 결함 0건 갱신
-- [ ] 커밋 메시지 예: `feat(boundary): AC-FR-01-01 GREEN — INVALID_SIZE size validation`
+- [x] 기능 테스트 20건 전체 GREEN (`TestNormalFailureReturn` ~ `TestMessageIdentity`)
+- [x] 메타 테스트 5건 전체 GREEN (`TestScopeRestriction`)
+- [x] **파일 합계 25 passed**
+- [x] `pytest --cov=src --cov-report=term-missing` — Boundary 검증 분기 커버 확인 (DEF-009, `screen_boundary` 93%)
+- [x] [docs/defect_list.md](./docs/defect_list.md) Open 결함 0건 갱신
+- [x] 커밋: `feat(boundary): AC-FR-01-01 GREEN — INVALID_SIZE size validation`
 
 **수정 허용 범위 (커밋 2-A):** `src/boundary/screen_boundary.py`, `src/boundary/models.py`, `src/boundary/__init__.py`  
 **금지:** `resolve()` 구현, AC-FR-01-02~05 선행, 4×3·5×5·정상 4×4 테스트 추가
+
+**검증:** `pytest tests/boundary/test_grid_input_validation_ac_fr_01_01.py -v` (25/25 PASS)
 
 ---
 
@@ -85,9 +87,9 @@ QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼�
 | 구분 | 통과 | 실패 | 비고 |
 |------|------|------|------|
 | 커밋 1 (None) | 9 | 0 | GREEN 완료 |
-| 커밋 2-A (size) | 0 | 11 | RED |
-| 커밋 2-B (메타) | 1 | 4 | RED |
-| **합계** | **10** | **15** | 25 collected |
+| 커밋 2-A (size) | 11 | 0 | GREEN 완료 |
+| 커밋 2-B (메타) | 5 | 0 | GREEN 완료 |
+| **합계** | **25** | **0** | 25 collected |
 
 ---
 
@@ -246,11 +248,10 @@ MagicSquare_xx/
 
 ## 다음 단계 (제안)
 
-1. **AC-FR-01-01 GREEN 커밋 2** — size 위반 일괄 + 메타 테스트 (상단 체크리스트)
-2. [02 설계서](./Report/02.DualTrack_CleanArchitecture_Design_Report.md) 기준 **Domain RED** (D-T07~D-T09)
-3. UI Boundary U-IN-04~08 (`tests/boundary/test_u_in_validation.py`)
-4. Data `MatrixRepository` InMemory → (선택) File JSON
-5. 통합 시나리오 IT-01~IT-06, 커버리지 목표 (Domain 95%+ / UI 85%+ / Data 80%+)
+1. [02 설계서](./Report/02.DualTrack_CleanArchitecture_Design_Report.md) 기준 **Domain RED** (D-T07~D-T09)
+2. UI Boundary U-IN-04~08 (`tests/boundary/test_u_in_validation.py`)
+3. Data `MatrixRepository` InMemory → (선택) File JSON
+4. 통합 시나리오 IT-01~IT-06, 커버리지 목표 (Domain 95%+ / UI 85%+ / Data 80%+)
 
 ---
 
@@ -275,7 +276,7 @@ MagicSquare_xx/
 
 ### 결함 목록 연결
 - [x] defect_list.md 생성 및 발견 결함 기록 ([docs/defect_list.md](./docs/defect_list.md))
-- [ ] 모든 결함 수정 후 회귀 테스트 통과 확인 (GREEN 커밋 2 완료 시)
+- [x] 모든 결함 수정 후 회귀 테스트 통과 확인 (GREEN 커밋 2 완료 — 25/25 PASS)
 
 ---
 

@@ -6,6 +6,8 @@ from collections.abc import Callable
 
 from boundary.models import FailureResult
 
+GRID_SIZE = 4
+
 ResolvePort = Callable[[list[list[int]]], list[int]]
 
 
@@ -18,6 +20,11 @@ class ScreenBoundary:
     def submit(self, grid: list[list[int]] | None) -> FailureResult | list[int]:
         """Validate grid contract and return failure or delegate to resolve."""
         if grid is None:
+            return FailureResult(
+                code="INVALID_SIZE",
+                message="Grid must be 4x4.",
+            )
+        if len(grid) != GRID_SIZE or any(len(row) != GRID_SIZE for row in grid):
             return FailureResult(
                 code="INVALID_SIZE",
                 message="Grid must be 4x4.",
