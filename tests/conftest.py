@@ -28,3 +28,10 @@ def mock_resolve() -> MagicMock:
 def boundary(mock_resolve: MagicMock) -> ScreenBoundary:
     """ScreenBoundary with injected resolve mock."""
     return ScreenBoundary(resolve=mock_resolve)
+
+
+# --- Report/09 grid fixtures (GREEN 전 placeholder — 주석만) ---
+# G0: [[16, 2, 3, 13], [5, 11, 10, 8], [9, 7, 6, 12], [4, 14, 15, 1]]
+# G1: [[16, 2, 3, 13], [5, 0, 11, 8], [9, 6, 0, 12], [4, 15, 14, 1]]
+# G2: TBD (D-SOL-02 / SC-DOM-SOL-001)
+# G3: PLACEHOLDER unsolvable partial grid
