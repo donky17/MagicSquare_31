@@ -1,0 +1,43 @@
+---
+title: ECB 아키텍처 규칙
+scope: repository
+---
+
+## Purpose
+- ECB(boundary/control/entity) 레이어 정의, 책임, 의존 방향을 고정한다.
+
+## Definitions
+### Boundary
+- **정의**: 외부 입출력 담당 (UI, API, CLI)
+- **책임**
+  - 입력 파싱/검증(계약 수준)
+  - 출력 포맷/에러 스키마 표준화
+  - 외부 시스템(파일/네트워크/DB/콘솔) 연동
+
+### Control
+- **정의**: 비즈니스 로직 담당
+- **책임**
+  - 유스케이스 오케스트레이션
+  - 결정 규칙(흐름 제어) 구현
+  - entity를 조합해 시나리오 수행
+
+### Entity
+- **정의**: 도메인 데이터 및 규칙 담당
+- **책임**
+  - 도메인 모델/불변조건 유지
+  - 순수 규칙(판정/검증) 제공
+  - 부작용 없는 계산 로직
+
+## Dependency direction
+### Allowed
+- boundary -> control
+- control -> entity
+
+### Forbidden
+- entity -> control
+- entity -> boundary
+- control -> boundary
+
+## Constraints (MUST)
+- entity는 파일/콘솔/네트워크/DB 등 외부 I/O에 의존하지 않는다.
+- boundary는 도메인 규칙을 포함하지 않고 control을 통해 접근한다.

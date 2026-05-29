@@ -3,7 +3,19 @@
 4×4 마방진(Magic Square)을 다루는 프로그램 과제입니다.  
 QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼저 고정하고, 이후 구현·테스트로 확장하는 것을 목표로 합니다.
 
-> **현재 단계:** 문제 인식·정의 완료 (STEP 1~5) — **구현·알고리즘·실행 코드 없음**
+> **현재 단계:** 문제 정의(STEP 1~5) + Dual-Track · Clean Architecture **설계서** 완료 — **구현·실행 코드 없음**
+
+---
+
+## PRD (구현 전 제품 요구 문서)
+
+- PRD 문서: [Report/06.PRD_MagicSquare_xx.md](./Report/06.PRD_MagicSquare_xx.md)
+- PRD가 고정하는 것:
+  - **Vision / Goals / Non-goals**
+  - **MVP 범위(2빈칸 입력 → 결과 또는 오류)**
+  - **Input / Output / Error Contract**
+  - **Invariants(P/I/O/M)와 Dual-Track 검증 전략**
+  - **Quality bar(결정성/회귀/커버리지/금지 패턴 요약)**
 
 ---
 
@@ -16,6 +28,21 @@ QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼�
 | 접근 | TDD·명세·불변조건·오라클 설계를 전제로 한 문제 정의 |
 | 1차 목표 | **마방진인지 판단하는 기준**을 신뢰·테스트·회귀 가능하게 만드는 것 |
 | 2차 목표 (확장) | 판정이 안정된 뒤, 규칙을 만족하는 유효 배치 **산출** |
+| 설계 (현재) | 2빈칸 완성, Logic / UI Boundary / Data 레이어, Dual-Track TDD |
+
+---
+
+## 설계 요약 (02.Report)
+
+2빈칸 퍼즐 유스케이스 기준 **입·출력 계약** (구현 전):
+
+| 항목 | 계약 |
+|------|------|
+| 입력 | `int[4][4]`, `0`=빈칸 **2개**, 값 `0` 또는 `1~16`, 0 제외 중복 금지 |
+| 출력 | `int[6]` = `[r1,c1,n1,r2,c2,n2]` (좌표 **1-index**) |
+| 레이어 | Domain(판정·해결) → Screen Boundary → Data(Repository) |
+
+상세: [Report/02.DualTrack_CleanArchitecture_Design_Report.md](./Report/02.DualTrack_CleanArchitecture_Design_Report.md)
 
 ---
 
@@ -93,28 +120,33 @@ QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼�
 
 ```
 MagicSquare_xx/
-├── README.md                          ← 이 파일
+├── README.md                                                    ← 이 파일
 ├── Report/
-│   └── 01.ProblemDefinition_Report.md ← STEP 1~5 통합 보고서
+│   ├── 01.ProblemDefinition_Report.md                           ← STEP 1~5 문제 정의
+│   └── 02.DualTrack_CleanArchitecture_Design_Report.md          ← Dual-Track · CA 설계
+├── Prompt/
+│   └── 02.DualTrack_CleanArchitecture_Design-Prompt.md           ← 설계 단계 대화 transcript
 └── Prompting/
-    └── 01.ProblemDefinition_Report-Prompt.md  ← 문제 정의 대화·프롬프트 기록
+    └── 01.ProblemDefinition_Report-Prompt.md                    ← 문제 정의 대화 transcript
 ```
 
 | 경로 | 설명 |
 |------|------|
 | [Report/01.ProblemDefinition_Report.md](./Report/01.ProblemDefinition_Report.md) | 관찰, Why #1~#3, 진짜 문제 정의, Invariant, 부록 전체 |
-| [Prompting/01.ProblemDefinition_Report-Prompt.md](./Prompting/01.ProblemDefinition_Report-Prompt.md) | 문제 정의 단계에 사용한 프롬프트·대화보내기 |
+| [Report/02.DualTrack_CleanArchitecture_Design_Report.md](./Report/02.DualTrack_CleanArchitecture_Design_Report.md) | Logic / UI Boundary / Data 설계, 테스트·통합·Traceability |
+| [Report/06.PRD_MagicSquare_xx.md](./Report/06.PRD_MagicSquare_xx.md) | 구현 전 PRD(비전/범위/계약/불변식/검증/품질바) |
+| [Prompt/02.DualTrack_CleanArchitecture_Design-Prompt.md](./Prompt/02.DualTrack_CleanArchitecture_Design-Prompt.md) | Dual-Track 설계 단계 User/Cursor 프롬프트 export |
+| [Prompting/01.ProblemDefinition_Report-Prompt.md](./Prompt/01.ProblemDefinition_Report-Prompt.md) | 문제 정의 단계 User/Cursor 프롬프트 export |
 
 ---
 
 ## 다음 단계 (제안)
 
-보고서 범위를 넘어, 아직 작성되지 않은 후속 작업입니다.
-
-1. 개선된 정의를 전제로 한 **시나리오 목록** (유효·무효·경계) — 명세 수준
-2. In/Out scope에 대한 이해관계자 확인
-3. 동형 해·부분 격자 등 **별도 정책** 문서화 여부 결정
-4. (이후) TDD에 따른 구현·테스트
+1. [02 설계서](./Report/02.DualTrack_CleanArchitecture_Design_Report.md) 기준 **Domain RED** (D-T07~D-T09)부터 구현·테스트
+2. UI Boundary Contract 테스트 (U-T01~, Domain Mock)
+3. Data `MatrixRepository` InMemory → (선택) File JSON
+4. 통합 시나리오 IT-01~IT-06, 커버리지 목표( Domain 95%+ / UI 85%+ / Data 80%+ )
+5. 미결정 Q-1~Q-3 (Application 레이어, 응답 래핑, 파일 포맷) 확정
 
 ---
 
@@ -123,10 +155,13 @@ MagicSquare_xx/
 | 날짜 | 내용 |
 |------|------|
 | 2026-05-28 | STEP 1~5 문제 정의 완료, `Report/01.ProblemDefinition_Report.md` 작성 |
+| 2026-05-28 | Dual-Track · Clean Architecture 설계, `Report/02...`, `Prompt/02...` 작성 |
+| 2026-05-28 | 구현 전 PRD 초안 작성, `Report/06.PRD_MagicSquare_xx.md` 작성 |
 
 ---
 
 ## 참고
 
-- 상세 논의·표·단계별 분석은 [문제 정의 보고서](./Report/01.ProblemDefinition_Report.md)를 참고하세요.
-- 본 README와 보고서에는 **구현 설계, 코드, 알고리즘**을 포함하지 않습니다.
+- 문제 정의: [01.ProblemDefinition_Report.md](./Report/01.ProblemDefinition_Report.md)
+- 아키텍처·TDD 설계: [02.DualTrack_CleanArchitecture_Design_Report.md](./Report/02.DualTrack_CleanArchitecture_Design_Report.md)
+- 저장소에는 **실행 코드·알고리즘 구현**이 없으며, Report는 설계·계약·테스트 계획 수준입니다.
