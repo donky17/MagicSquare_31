@@ -13,7 +13,7 @@ QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼�
 > 검증 명령: `pytest tests/boundary/test_grid_input_validation_ac_fr_01_01.py -v`  
 > 커밋 전략: **세분화 4커밋 대신 통합 2커밋** (None → size 일괄)
 
-### 커밋 1 — `grid=None` (B-T01) · DEF-001
+### 커밋 1 — `grid=None` (B-T01) · DEF-001 · ✅ GREEN 완료
 
 - [x] RED 확인: `submit(grid=None)` → `NotImplementedError` 또는 계약 미충족
 - [x] GREEN 구현: `grid is None` → `FailureResult(code="INVALID_SIZE", message="Grid must be 4x4.")`
@@ -21,9 +21,10 @@ QA 엔지니어 관점에서 **문제 정의·검증 가능한 요구**를 먼�
 - [x] `TestNormalFailureReturn` 5건 통과 (#1~5)
 - [x] `TestDomainIsolation` — None 2건 통과 (#6~7)
 - [x] `TestMessageIdentity` — None 2건 통과 (#8~9)
-- [ ] 커밋 메시지 예: `feat(boundary): AC-FR-01-01 GREEN — grid=None INVALID_SIZE`
+- [x] 커밋: `a85ae7d` — `feat(boundary): AC-FR-01-01 GREEN commit 1 and project docs`
 
-**대상 입력:** `grid = None`
+**대상 입력:** `grid = None`  
+**검증:** `pytest tests/boundary/test_grid_input_validation_ac_fr_01_01.py::TestNormalFailureReturn -v` (9/9 PASS)
 
 ---
 
