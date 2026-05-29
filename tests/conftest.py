@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -28,6 +29,28 @@ def mock_resolve() -> MagicMock:
 def boundary(mock_resolve: MagicMock) -> ScreenBoundary:
     """ScreenBoundary with injected resolve mock."""
     return ScreenBoundary(resolve=mock_resolve)
+
+
+def pytest_addoption(parser: pytest.Parser) -> None:
+    """Register golden master approval CLI flag."""
+    parser.addoption(
+        "--approve-golden",
+        action="store_true",
+        default=False,
+        help="Overwrite tests/golden_master_expected.txt with current output.",
+    )
+
+
+@pytest.fixture
+def approve_golden(request: pytest.FixtureRequest) -> bool:
+    """True when approval mode is enabled via CLI flag or environment variable."""
+    cli_approve = bool(request.config.getoption("approve_golden"))
+    env_approve = os.environ.get("GOLDEN_MASTER_APPROVE", "").lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+    return cli_approve or env_approve
 
 
 # --- Report/09 grid fixtures (GREEN 전 placeholder — 주석만) ---
