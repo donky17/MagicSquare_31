@@ -311,7 +311,7 @@ MagicSquare_xx/
 
 > **전제:** `.cursorrules` `refactor_phase` — 기능 변경 없이 구조만 개선, **관련 테스트 GREEN 유지**, 커버리지·핵심 경로 검증 유지.  
 > **범위:** AC-FR-01-01(25 GREEN) + Golden Master(9 GREEN)가 보호하는 `screen_boundary` 경로만. RED 스켈레톤·U-IN/U-OUT/U-FLOW·control/UI 신규 테스트는 **이번 REFACTOR 범위 밖** (별도 GREEN phase).  
-> **상세 보고서:** [Report/13.REFACTOR_Phase_Readiness_and_Checklist_Report.md](./Report/13.REFACTOR_Phase_Readiness_and_Checklist_Report.md) · Transcript: [Prompt/13.REFACTOR_Phase_Readiness_and_Checklist-Prompt.md](./Prompt/13.REFACTOR_Phase_Readiness_and_Checklist-Prompt.md)
+> **상세 보고서:** [Report/14.Screen_Boundary_REFACTOR_Implementation_Report.md](./Report/14.Screen_Boundary_REFACTOR_Implementation_Report.md) · Transcript: [Prompt/14.Screen_Boundary_REFACTOR-Prompt.md](./Prompt/14.Screen_Boundary_REFACTOR-Prompt.md) · 준비: [Report/13...](./Report/13.REFACTOR_Phase_Readiness_and_Checklist_Report.md)
 
 ### REFACTOR 단계 공통 규칙
 
@@ -444,6 +444,7 @@ REFACTOR 후 **SM-01·SM-02**는 반드시 재실행한다 (출력 포맷·좌�
 | 2026-05-29 | REFACTOR 준비 보고서·transcript, `Report/13...`, `Prompt/13...` |
 | 2026-05-29 | `screen_boundary.py` Refactoring To-Do (§ 3-A) 추가 |
 | 2026-05-29 | REFACTOR 체크리스트 범위 정리 — RED·범위 밖 항목 제거, `screen_boundary` 한정 |
+| 2026-05-29 | `screen_boundary.py` REFACTOR 3커밋 완료 — `Report/14...`, `Prompt/14...` |
 
 ---
 
