@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from boundary.models import FailureResult
+from entity.exceptions import DomainError
 
 GRID_SIZE = 4
 
@@ -29,4 +30,7 @@ class ScreenBoundary:
                 code="INVALID_SIZE",
                 message="Grid must be 4x4.",
             )
-        raise NotImplementedError("AC-FR-01-01: input validation not implemented")
+        try:
+            return self._resolve(grid)
+        except DomainError as exc:
+            return FailureResult(code=exc.code, message=exc.message)
