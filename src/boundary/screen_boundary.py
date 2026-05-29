@@ -11,6 +11,19 @@ from entity.exceptions import DomainError
 ResolvePort = Callable[[list[list[int]]], list[int]]
 
 
+def _invalid_size_result() -> FailureResult:
+    return FailureResult(
+        code="INVALID_SIZE",
+        message="Grid must be 4x4.",
+    )
+
+
+def _is_valid_grid_size(grid: list[list[int]] | None) -> bool:
+    if grid is None:
+        return False
+    return len(grid) == GRID_SIZE and all(len(row) == GRID_SIZE for row in grid)
+
+
 class ScreenBoundary:
     """Boundary entry for grid submission and domain resolve delegation."""
 
@@ -19,16 +32,8 @@ class ScreenBoundary:
 
     def submit(self, grid: list[list[int]] | None) -> FailureResult | list[int]:
         """Validate grid contract and return failure or delegate to resolve."""
-        if grid is None:
-            return FailureResult(
-                code="INVALID_SIZE",
-                message="Grid must be 4x4.",
-            )
-        if len(grid) != GRID_SIZE or any(len(row) != GRID_SIZE for row in grid):
-            return FailureResult(
-                code="INVALID_SIZE",
-                message="Grid must be 4x4.",
-            )
+        if not _is_valid_grid_size(grid):
+            return _invalid_size_result()
         try:
             return self._resolve(grid)
         except DomainError as exc:
