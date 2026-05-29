@@ -1,0 +1,36 @@
+---
+title: MagicSquare 프로젝트 규칙
+scope: repository
+---
+
+## Purpose
+- MagicSquare_xx 프로젝트의 목표/참조 문서/기본 디렉터리 구조를 고정한다.
+
+## Context
+- **Project**: MagicSquare_xx
+- **Domain**: 4x4 Magic Square
+- **Goals**
+  - 판정(유효성 판단 기준)을 명세/테스트/회귀 가능하게 고정
+  - 판정 안정화 이후 유효 배치 산출(확장 범위)
+- **References**
+  - `Report/01.ProblemDefinition_Report.md`
+  - `Report/02.DualTrack_CleanArchitecture_Design_Report.md`
+
+## File structure (ECB 기준 예시)
+```
+MagicSquare_xx/
+├─ boundary/
+│  ├─ ui/
+│  ├─ api/
+│  └─ cli/
+├─ control/
+├─ entity/
+└─ tests/
+   ├─ boundary/
+   ├─ control/
+   └─ entity/
+```
+
+## Rules
+- 프로젝트 구조는 ECB(boundary/control/entity)를 기준으로 유지한다.
+- 도메인 규칙(판정/검증)은 `entity`에 위치시키고, 외부 입출력은 `boundary`로 격리한다.
