@@ -280,6 +280,33 @@ MagicSquare_xx/
 
 ---
 
+## Golden Master 회귀 안전장치
+
+> Refactoring 시작 전 구축. GREEN 완료 후 즉시 적용.
+
+### 기준 파일 생성
+
+- [x] GM-01: `golden_master_expected.txt` 생성 ([tests/golden_master_expected.txt](./tests/golden_master_expected.txt))
+- [x] GM-02: 정상/역순/오류 시나리오 추가 (GM-TC-01~05)
+- [x] GM-03: `git add tests/golden_master_expected.txt`
+
+### 테스트 코드
+
+- [x] GM-04: `test_golden_master_magic_square` 작성 ([tests/test_golden_master_magic_square.py](./tests/test_golden_master_magic_square.py))
+- [x] GM-05: approve 패턴 적용 (`--approve-golden`, `GOLDEN_MASTER_APPROVE=1`)
+- [x] GM-06: Golden Master 테스트 PASS 확인 (`pytest -m golden_master -v` — 9/9 PASS)
+
+### 회귀 보호
+
+- [x] GM-07: row-major 규칙 보호
+- [x] GM-08: 1-index 출력 보호
+- [x] GM-09: reverse 조합 fallback 보호
+- [x] GM-10: Error Contract 보호
+
+> 상세 설계: [docs/golden_master_approve_pattern.md](./docs/golden_master_approve_pattern.md)
+
+---
+
 ## 문서 이력
 
 | 날짜 | 내용 |
