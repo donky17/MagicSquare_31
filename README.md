@@ -236,7 +236,7 @@ MagicSquare_xx/
 | [Report/02.DualTrack_CleanArchitecture_Design_Report.md](./Report/02.DualTrack_CleanArchitecture_Design_Report.md) | Logic / UI Boundary / Data 설계, 테스트·통합·Traceability |
 | [Report/06.PRD_MagicSquare_xx.md](./Report/06.PRD_MagicSquare_xx.md) | 구현 전 PRD(비전/범위/계약/불변식/검증/품질바) |
 | [Report/07.AC_FR_01_01_RED_Testing_and_QA_Report.md](./Report/07.AC_FR_01_01_RED_Testing_and_QA_Report.md) | AC-FR-01-01 RED 테스트·QA·결함·환경 정비 보고서 |
-| [Report/10.AC_FR_01_01_GREEN_Testing_and_Implementation_Report.md](./Report/10.AC_FR_01_01_GREEN_Testing_and_Implementation_Report.md) | AC-FR-01-01 GREEN 진행·통합 2커밋·구현 스냅샷 |
+| [Report/10.AC_FR_01_01_GREEN_Testing_and_Implementation_Report.md](./Report/10.AC_FR_01_01_GREEN_Testing_and_Implementation_Report.md) | AC-FR-01-01 GREEN 완료·통합 2커밋·25 passed 스냅샷 |
 | [docs/test_plan.md](./docs/test_plan.md) | AC-FR-01-01 테스트 계획서 (B-T01~B-T06) |
 | [docs/defect_list.md](./docs/defect_list.md) | RED/GREEN 결함 목록 |
 | [Prompt/02.DualTrack_CleanArchitecture_Design-Prompt.md](./Prompt/02.DualTrack_CleanArchitecture_Design-Prompt.md) | Dual-Track 설계 단계 User/Cursor 프롬프트 export |
@@ -290,7 +290,7 @@ MagicSquare_xx/
 | 2026-05-29 | AC-FR-01-01 RED 결함 목록, `docs/defect_list.md` 작성 |
 | 2026-05-29 | AC-FR-01-01 RED·QA 보고서·transcript, `Report/07...`, `Prompt/07...` 작성 |
 | 2026-05-29 | AC-FR-01-01 GREEN 시작 — Boundary `ScreenBoundary.submit()`, 통합 2커밋 전략 README 반영 |
-| 2026-05-29 | AC-FR-01-01 GREEN 보고서·transcript, `Report/10...`, `Prompt/10...` 작성 |
+| 2026-05-29 | AC-FR-01-01 GREEN 완료 보고서·transcript 갱신, `Report/10...`, `Prompt/10...` (25 passed) |
 
 ---
 
